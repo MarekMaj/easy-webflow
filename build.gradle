@@ -1,0 +1,56 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.6
+group = 'org.easy-webflow'
+version = '0.0.1-SNAPSHOT'
+
+def localMavenRepo = new File('/home/marc/.m2/repository').toURL().toString()
+
+repositories {
+	mavenRepo urls: localMavenRepo
+	mavenCentral()
+}
+
+/*jaki scope dependency powinienem ustawic ?? compile czy nowy provided ?? */
+configurations {
+	provided
+}
+
+dependencies {
+	compile 'com.sun.faces:jsf-api:2.1.2' , 'javax.enterprise:cdi-api:1.0-SP4'
+}
+
+sourceSets {
+	main { compileClasspath}
+}
+
+task targetJar(type: Jar){
+	manifest = project.manifest {
+		 attributes("Implementation-Title": "Easy-webflow framework", "Implementation-Version": version)
+	}
+	from sourceSets.main.classesDir
+}
+
+artifacts {
+	archives targetJar
+}
+
+uploadArchives {
+	repositories.mavenDeployer {
+		repository(url: "file://home/marc/.m2/repository/")
+		/*dlaczego to nie dziala ????? */
+		pom.project {
+			url = 'http://github.com/MarekMaj/easy-webflow'
+
+			developers {
+				developer {
+          				id = 'MarekMaj'
+					name = 'Marek Maj'
+					email = 'MarekMaj2@gmail.com'
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,50 @@
+EASY-WEBFLOW Framework
+
+1. Introduction
+// TODO
+
+2. Requirements:
+- Gradle 1.0-milestone-3
+- Apache Maven local repo
+
+3. Usage
+From main project directory run (to produce and install framework-[version].jar file in your local repo):
+	- gradle install
+
+To see example how to use framework in your web project (including specifying dependencies) please visit easy-webflow-sample project on github https://github.com/MarekMaj/easy-webflow-sample and read README file.
+
+4. Definig a flow (short)
+#File definition
+File definition consists of at least one flow.
+
+#Flow definition
+Flow definition consists of flow intro (one line containing flowName and possibly optional artifacts) and at least one state definition.
+
+#State definition
+############################
+// TODO 
+Values in brackets are optional. 
+
+Flow: "flowName" [secured: "securityRole"] 
+state:"stateName" [view="viewName"] [secured: "securityRole"]
+	[-"beanName.methodName([paramName...])" [result="resultName"] ]
+	:on "outcome" [to "stateName"] [secured: "securityRole"]
+	[:on "exit [to "stateName"]]
+
+state":"outcomeState":
+	-"gfsdgfdg"
+	:on "confirm" decision:
+		[-"userDao.czyCosTam()" [result="rezultat"]] //tutaj result też opcjonalny ???
+		:if "rezultat"=="true" [to "gfd"]
+		:else to "gdf"
+	:on "cancel"
+
+state:"end-state" view="confirmation"
+	-bookingDao.persist(booking)
+	:on "exit"	#zakonczenie flowa
+
+	:on " " -"Fdsfsdf"
+____________________________________________________________________________________
+
+In present version flows have to be specified in 'flow' file in '/WEB-INF/' directory. 
+

@@ -1,0 +1,12 @@
+#target folders#
+build/
+bin/
+
+#eclipse#
+*.project
+*.settings
+
+#gradle#
+.gradle
+
+*.classpath
