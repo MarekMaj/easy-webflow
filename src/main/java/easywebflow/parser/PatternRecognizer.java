@@ -196,7 +196,7 @@ public class PatternRecognizer {
 
 			if (matcher.matches() && scanner.hasNext()){
 				//System.out.println("invokation:" + grupa);
-				tcb.setOnStartCommand(parseInvokation(grupa));
+				tcb.addOnDecision(parseInvokation(grupa));
 				grupa = scanner.next();
 				//System.out.println("grupa:" + grupa);
 			}
@@ -263,6 +263,8 @@ public class PatternRecognizer {
 		//builder.setResultName(matcher.group(matcher.groupCount()));
 		// n--;
 		for (int i=3; i <=n; i++){
+			// TODO: tutaj cos nie tak, dodaje nieistniejące puste wartosci
+			//System.out.println("dodaje parametr "+ matcher.group(i));
 			builder.addParamName(matcher.group(i));
 		}
 		

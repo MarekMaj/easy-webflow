@@ -1,5 +1,6 @@
 package easywebflow.config;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class TransitionConfigBuilder {
@@ -7,9 +8,11 @@ public class TransitionConfigBuilder {
 	private String on;
 	
 	//optional
-	private CommandConfig onStartCommand;
-	private LinkedHashMap<CommandConfig, String> ifz;
-	private String to;
+	private ArrayList<CommandConfig> onTransition;
+	private ArrayList<CommandConfig> onDecision;
+	private LinkedHashMap<CommandConfig, String> ifz;	// if String not given then set to CommandConfig.getVariableValue()
+	private String to;									// if to not given then set to this.on
+	private String elseTo;
 	
 	public TransitionConfigBuilder() {
 		super();
@@ -21,6 +24,20 @@ public class TransitionConfigBuilder {
 			ifz = new LinkedHashMap<CommandConfig, String>();
 		}
 		ifz.put(cc, s == null ? cc.getVariableValue():s);
+	}
+
+	public void addOnTransition(CommandConfig cc){
+		if (this.onTransition == null){
+			this.onTransition = new ArrayList<CommandConfig>();
+		}
+		this.onTransition.add(cc);
+	}
+	
+	public void addOnDecision(CommandConfig cc){
+		if (this.onDecision == null){
+			this.onDecision = new ArrayList<CommandConfig>();
+		}
+		this.onDecision.add(cc);
 	}
 	
 	//getters and setters
@@ -37,15 +54,24 @@ public class TransitionConfigBuilder {
 		return this;
 	}
 
-	public CommandConfig getOnStartCommand() {
-		return onStartCommand;
+	public ArrayList<CommandConfig> getOnTransition() {
+		return onTransition;
 	}
 
-	public TransitionConfigBuilder setOnStartCommand(CommandConfig onStartCommand) {
-		this.onStartCommand = onStartCommand;
+	public TransitionConfigBuilder setOnTransition(ArrayList<CommandConfig> onTransition) {
+		this.onTransition = onTransition;
 		return this;
 	}
 
+	public ArrayList<CommandConfig> getOnDecision() {
+		return this.onDecision;
+	}
+
+	public TransitionConfigBuilder setOnDecision(ArrayList<CommandConfig> onDecision) {
+		this.onDecision = onDecision;
+		return this;
+	}
+	
 	public LinkedHashMap<CommandConfig, String> getIfz() {
 		return ifz;
 	}
@@ -56,7 +82,7 @@ public class TransitionConfigBuilder {
 	}
 
 	public String getTo() {
-		return to;
+		return this.to != null ? this.to :this.on;
 	}
 
 	public TransitionConfigBuilder setTo(String to) {
@@ -64,5 +90,12 @@ public class TransitionConfigBuilder {
 		return this;
 	}
 	
-	
+	public String getElseTo() {
+		return this.elseTo;
+	}
+
+	public TransitionConfigBuilder setElseTo(String elseTo) {
+		this.elseTo = elseTo;
+		return this;
+	}	
 }

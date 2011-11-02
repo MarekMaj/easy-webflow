@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!-- root element -->
+<xs:element name="config" type="configType" />
+
+<!-- types -->
+<xs:simpleType name="stringType">
+	<xs:restriction base="xs:string" />
+</xs:simpleType>
+
+<xs:simpleType name="booleanType">
+	<xs:restriction base="xs:boolean" />
+</xs:simpleType>
+
+<xs:complexType name="configType">
+	<xs:sequence>
+		<xs:element name="useXML" type="booleanType" />
+		<!-- Path from WEB-INF directory -->
+		<xs:element name="configFilePath" type="stringType" />
+		<!-- pomysly:
+		export do XML
+		timeout dla flowów
+		jezeli podziele framework na dwie części to ktore w uzyciu 
+		
+		 -->
+	</xs:sequence>
+</xs:complexType>
+</xs:schema>

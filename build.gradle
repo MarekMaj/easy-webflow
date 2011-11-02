@@ -4,7 +4,7 @@ apply plugin: 'maven'
 
 sourceCompatibility = 1.6
 group = 'org.easy-webflow'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 
 def localMavenRepo = new File('/home/marc/.m2/repository').toURL().toString()
 

@@ -33,9 +33,9 @@ public class FlowImpl implements Flow, Serializable {
 	@Inject @Any 
 	private Instance<Object> anyObject;
 	
-	/*This method is called externally during bean registering.
-	 * It is recommended not to call this method anywhere else.
-	 * */
+	/** This method is called externally during bean registering.
+	 *  It is recommended not to call this method anywhere else.
+	 */
 	@Override
 	public void setFlowName(String name){
 		flowName = name;
@@ -43,14 +43,13 @@ public class FlowImpl implements Flow, Serializable {
 	
 	@PostConstruct
 	public void initData(){
-		//service = getInstance("myService", "getD"); 	
 		System.out.println("Post construct:" + flowName);
 		this.stateContext = MainFactory.getStateContext(this, flowName);
 	}
 	
 	/*test*/
 	public String start(){
-		// if flow already exist
+		/* If flow already exist */
 		if (conversation.isTransient()){
 			conversation.begin();
 		}
@@ -61,13 +60,19 @@ public class FlowImpl implements Flow, Serializable {
 	
 	/*test*/
 	@Override
-	//public String transitionTo(String stateName) {
-	public String transitionTo() {
-		System.out.println( "transition");
-		//String s = this.stateContext.transitionTo(stateName);
-		String s = this.stateContext.transitionTo("outcome");
+	public String transitionTo(String transitionName) {
+		/** wołam: transitionTo(stateName)
+		 * Jezeli zwrócona zostanie nazwa != null to przechodzę do tego widoku (sprawdzam jeszcze czy to był endState)
+		 * Jeżeli endState to kończę konwersację
+		 * Jeżeli zwrócony zostanie IllegalTransitionException to pozostaję w tym widoku i tworzę log ?
+		 */
+		//System.out.println( "transitionTo: "+ stateName);
+		/* Process transition and return new state name */
+		String s = this.stateContext.transitionTo(transitionName);
+
 		if (s == null){
 			System.out.println( "koncze flow");
+			/* If flow already finished */
 			if (!conversation.isTransient()){
 				conversation.end();
 			}
@@ -79,24 +84,24 @@ public class FlowImpl implements Flow, Serializable {
 	@Override
 	public Object invoke(String beanName, String methodName,
 			String... paramName) {
-		System.out.println("invoke by flow: " + beanName + " " +methodName + " " +paramName[0] );
+		System.out.println("*******************");
+		System.out.println("invoke by flow: " + beanName + " " +methodName + " " +paramName );
 		InjectedObjectData data = this.getExternalData(beanName);
 		
 		ArrayList<Object> paramObjects = new ArrayList<Object>();
 		ArrayList<Class> paramClass = new ArrayList<Class>();		
 		for (String s:paramName){
 			if (s != null){
-				System.out.println("dodaje: "+s);
+				//System.out.println("dodaje: "+s);
 				InjectedObjectData iod = this.getExternalData(s);
 				paramObjects.add(iod.getObject());
 				paramClass.add(iod.getClazz());
-				System.out.println("dodalem: "+s);
+				//System.out.println("dodalem: "+s);
 			}
 		}
 		
 		// build new Class array from ArrayList
 		Class[] paramClazz = new Class[paramClass.size()];
-		System.out.println("ok");
 		paramClass.toArray(paramClazz);
 		
 		Object object = null;
@@ -125,13 +130,14 @@ public class FlowImpl implements Flow, Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		System.out.println("*******************");
 		return object;
 	}
 
 	@Override
 	public void setResult(String resultName, Object result) {
 		// jezeli obiekt o takiej nazwie juz istnieje zastap istniejacy
+		System.out.println("Setting result: " + resultName + " "+ result.toString());
 		dataMap.put(resultName, new InjectedObjectData(resultName, result));
 
 	}
@@ -139,8 +145,12 @@ public class FlowImpl implements Flow, Serializable {
 	@Override
 	public boolean compareObjects(String comparedObjectName,
 			String comparedObjectValue) {
-		// TODO Auto-generated method stub
+		// TODO uzupelnic dla innych typów danych / wlasny interfejs comparable ??
 		System.out.println("Comparing: " + comparedObjectName + " "+ comparedObjectValue);
+		InjectedObjectData iod = this.getExternalData(comparedObjectName);
+		if ( iod.getObject().toString().equals(comparedObjectValue) ){
+			return true;
+		}
 		return false;
 	}
 	

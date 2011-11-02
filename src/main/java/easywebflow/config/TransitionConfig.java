@@ -1,5 +1,6 @@
 package easywebflow.config;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class TransitionConfig {
@@ -7,26 +8,34 @@ public class TransitionConfig {
 	private String on;
 	
 	//optional
-	private CommandConfig onStartCommand;
-	private LinkedHashMap<CommandConfig, String> ifz;		// if String not given then set to CommandConfig.getVariableValue()
-	private String to;										// if to not given then set to this.on
+	private ArrayList<CommandConfig> onTransition;
+	private ArrayList<CommandConfig> onDecision;
+	private LinkedHashMap<CommandConfig, String> ifz;
+	private String to;
+	private String elseTo;
 	
 	public TransitionConfig(TransitionConfigBuilder tcb) {
 		super();
 		this.on = tcb.getOn();
-		this.onStartCommand = tcb.getOnStartCommand();
+		this.onTransition = tcb.getOnTransition();
+		this.onDecision = tcb.getOnDecision();
 		this.ifz = tcb.getIfz();
 		this.to = tcb.getTo();
+		this.elseTo = tcb.getElseTo();
 	}
 
 	public String getOn() {
 		return on;
 	}
 
-	public CommandConfig getOnStartCommand() {
-		return onStartCommand;
+	public ArrayList<CommandConfig> getOnTransition() {
+		return onTransition;
 	}
 
+	public ArrayList<CommandConfig> getOnDecision() {
+		return onDecision ;
+	}
+	
 	public LinkedHashMap<CommandConfig, String> getIfz() {
 		return ifz;
 	}
@@ -35,6 +44,8 @@ public class TransitionConfig {
 		return to;
 	}
 	
-
+	public String getElseTo() {
+		return elseTo;
+	}
 	
 }

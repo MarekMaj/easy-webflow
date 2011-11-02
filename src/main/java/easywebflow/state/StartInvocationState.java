@@ -19,7 +19,7 @@ public class StartInvocationState extends DecoratedState {
 			c.execute();
 		}
 		
-		delegate.onStart();
+		super.onStart();
 	}
 
 }

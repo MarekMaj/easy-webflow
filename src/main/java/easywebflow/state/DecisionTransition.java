@@ -1,5 +1,6 @@
 package easywebflow.state;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -8,28 +9,35 @@ import easywebflow.command.Command;
 
 public class DecisionTransition extends DecoratedTransition {
 
+	private ArrayList<Command> commands;
 	private LinkedHashMap<Command, String> commandMap;
-	//private ArrayList<CommanToR> ifData;
 	private String elseTo;
 	
-	public DecisionTransition(Transition delegate, LinkedHashMap<Command, String> commandMap) {
+	public DecisionTransition(Transition delegate, ArrayList<Command> commands, LinkedHashMap<Command, String> commandMap, String elseTo) {
 		super(delegate);
+		this.commands = commands;
 		this.commandMap = commandMap;
+		this.elseTo = elseTo;
 	}
 	
 	@Override
 	public String transition() {
-		super.transition();
+		
+		for (Command cc: this.commands){
+			cc.execute();
+		}
 		
 		Iterator<Entry<Command, String>> it = commandMap.entrySet().iterator();
 		while (it.hasNext()){
 			Entry<Command, String> entry = it.next();
 			if (entry.getKey().execute()){
+				super.transition();
 				return entry.getValue();
 			}
 		}
 		
-		return elseTo;
+		super.transition();
+		return this.elseTo;
 	}
 
 		

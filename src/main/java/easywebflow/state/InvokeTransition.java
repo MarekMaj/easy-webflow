@@ -1,20 +1,25 @@
 package easywebflow.state;
 
+import java.util.ArrayList;
+
 import easywebflow.command.Command;
 
 public class InvokeTransition extends DecoratedTransition {
 
-	private Command command;
+	private ArrayList<Command> commands;
 	
-	public InvokeTransition(Transition delegate, Command command) {
+	public InvokeTransition(Transition delegate, ArrayList<Command> commands) {
 		super(delegate);
-		this.command = command;
+		this.commands = commands;
 	}
 
 	@Override
 	public String transition() {
-		command.execute();
-		return super.transition();
+		String s = super.transition();
+		for (Command cc: this.commands){
+			cc.execute();
+		}
+		return s;
 	}
 	
 	

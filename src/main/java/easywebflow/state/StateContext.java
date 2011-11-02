@@ -21,14 +21,15 @@ public class StateContext {
 		this.endStateName = endStateName;
 	}
 
-	public void enterStartState(){
-		System.out.println("Wchodze do stanu poczaktowego "+this.currentState.getName()); 
+	public void enterStartState(){ 
 		currentState.onStart();
 	}
 	
 	public String transitionTo(String name){
 		
 		// TODO co jezeli takie przejscie jest nielegalne 
+		// tutaj chyba dobrze zwrócic null - wtedy tak jak domyślnie w JSF 2 ta sama strona bedzie ponownie wyswietlona
+		// nie: zwracam Exception -> i we FlowImpl null
 		currentState.onExit();
 		// TODO co jezeli stan końcowy ?? moze i tak koncze obecny stan np. jezeli ze wzgledow bezp mam Exception
 		if (currentState.getName().equalsIgnoreCase(endStateName)){

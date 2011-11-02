@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
-
 import easywebflow.core.Flow;
 import easywebflow.command.Command;
 import easywebflow.config.CommandConfig;
@@ -17,14 +15,13 @@ import easywebflow.state.Transition;
 
 public class TransitionFactory {
 
-	@Inject
 	private CommandFactory cf = new CommandFactory();
 	
 	public Transition create(Flow flow, TransitionConfig tc) {
 		Transition transition = new SimpleTransition(tc.getTo());
 		
-		if(tc.getOnStartCommand() != null){
-			transition = new InvokeTransition(transition, cf.create(flow, tc.getOnStartCommand()));
+		if( tc.getOnTransition() != null){
+			transition = new InvokeTransition(transition, cf.create(flow, tc.getOnTransition()));
 		}
 		
 		if (tc.getIfz() != null){
@@ -36,7 +33,8 @@ public class TransitionFactory {
 				ifz.put(cf.create(flow, entry.getKey()), entry.getValue());
 			}
 			
-			transition = new DecisionTransition(transition, ifz);
+			
+			transition = new DecisionTransition(transition, cf.create(flow, tc.getOnDecision()), ifz, tc.getElseTo());
 		}
 			
 		return transition;
