@@ -1,15 +1,15 @@
 package easywebflow.state;
 
-import java.util.HashMap;
+import java.util.List;
 
 public class SimpleState implements State {
 
 	private String name;
-	private HashMap<String, Transition> transitionMap;
+	private List<Transition> transitionList;
 	
-	public SimpleState(String name, HashMap<String, Transition> map) {
+	public SimpleState(String name, List<Transition> list) {
 		this.name = name;
-		this.transitionMap = map;
+		this.transitionList = list;
 	}
 
 	@Override
@@ -17,12 +17,29 @@ public class SimpleState implements State {
 	}
 
 	@Override
-	public String onTransition(String name) {
-		if (!transitionMap.containsKey(name)){
-			// TODO rzucaj wyjatek IllegalTransitionException()
-			return null;
+	public String getStateNameForTransition(String name)
+			throws IllegalTransitionException {
+		for (Transition t : this.transitionList){
+			if (t.isAllowed(name)){
+				return t.getTargetStateName();
+			}
 		}
-		return transitionMap.get(name).transition();
+		
+		// there is no such transition
+		throw new IllegalTransitionException(name, this.name);
+	}
+	
+	@Override
+	public String onTransition(String name) throws IllegalTransitionException{
+		// search for appropriate transistion if present 
+		for (Transition t : this.transitionList){
+			if (t.isAllowed(name)){
+				return t.transition();
+			}
+		}
+		
+		// there is no such transition or condition inside transition is false
+		throw new IllegalTransitionException(name, this.name);
 
 	}
 

@@ -1,7 +1,7 @@
 EASY-WEBFLOW Framework
 
 1. Introduction
-Easy-Webflow is a new lightweight JEE framework for widely usage. It gives user very simple and convenient mechanism for defining business flows including security concerns. Flow could be considered as series of steps, that user has to accomplish in order to complete some business action. It is wider than request and usually shorter than session.  
+Easy-Webflow is a lightweight presentation layer framework for web applications. It gives user very simple and convenient mechanism for defining business flows including security concerns. Flow could be considered as series of steps, that user has to accomplish in order to complete some business action. It is wider than request and usually shorter than session.  
 Application is build on top of JSF 2.1 and CDI 1.0. It uses CDI powerful mechanism for dependency injection and interception. 
 
 Although it can be used with all kind of java web applications, it is mainly designed for webapp projects using CDI as 'glue' for its application layers and leveraging JSF 2 as MVC. 
@@ -12,32 +12,33 @@ Requirements:
 - Apache Maven local repo
 
 Installing jar:
+-Download project sources 
+-Scan through build.gradle file and optionally make some environment-specific changes  
 -From main project directory run (to produce and install framework-[version].jar file in your local repo):
-	<code>gradle install</code>
+	<code>gradle</code>
 
+or just download framework-[version].jar and manually put it in your maven local repository.
+ 
 To see example how to use framework in your web project (including specifying dependencies) please visit easy-webflow-sample project on github https://github.com/MarekMaj/easy-webflow-sample and read README file.
 
 3. Configuration file
-During start, application will look for config.xml file in '/WEB-INF/' directory.
+During start, application will look for easywebflow-config.xml file in '/WEB-INF/' directory.
 Configuration file is appropriate place to configure behavior of framework.
-See XML Schema for configuration file in /src/main/resources/config-schema.xml. 
+See XML Schema for configuration file in https://github.com/MarekMaj/easy-webflow/tree/master/src/main/resources/easywebflow-config.xsd. 
 
 4. Definig a flow
-See XML Schema for flow configuration file in /src/main/resources/flow-schema.xml.
+See XML Schema for flow configuration file in https://github.com/MarekMaj/easy-webflow/tree/master/src/main/resources/easywebflow-flow.xsd.
+This Schema is compatible with SCXML although framework does not support all its functionalities. Future work may concentrate on improving this support. 
 To define a flow just create XML file according to the schema and specify it's directory in configuration file.
-
-FYI: XML file is not the only way you can define your flow. It is also possible to define flows using framework description language. More info will come soon.  
 
 5. Integrate framework with JEE application
 Easy-Webflow core uses CDI dependency injection mechanism, CDI AOP interceptors and @ConversationScope. While integrating your service layer beans, you should make them visible for CDI Bean Manager. The simplest way to do this is to put javax.inject.Named annotation on class with optionally resolution name. 
-Easy-Webflow maintained flows will be accessed from users application facelets. User after specifying conversation details in flow configuration file, should access the appropriate flow from his view layer by binding it with view components.         
+Easy-Webflow maintained flows can be accessed from application facelets. User after specifying conversation details in flow configuration file, should access the appropriate flow from his view layer by binding it with view components.         
 
 It is recommended to use following approach while integrating framework with your view definition (facelet). 
-<code><h:commandButton value="Start -example- flow" action="#{example.<b>start</b>}"/></code> 
+<code><h:commandButton value="Start -example- flow" action="#{example.start}"/></code> 
 for starting "example" flow.
 
-<code><h:commandButton value="Invoke transition -next-" action="#{example.<b>transitionTo</b>('next')}"/></code> 
+<code><h:commandButton value="Invoke transition -next-" action="#{example.transitionTo('next')}"/></code> 
 for invoke "next" transition.
 It is required to include EL 2.2 (part of servlet 3.0) on your project path for this approach. Typically this requirement is satisfied when using newest application server eg Glassfish 3.1, JBoss AS 6+, Tomcat 7 etc.  
-
-Although it is the most convenient approach at this time, the support for specifying params in other way will come soon (EL 2.2 not required).

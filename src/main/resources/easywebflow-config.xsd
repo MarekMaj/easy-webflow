@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!-- root element -->
+<xs:element name="config" type="configType" />
+
+<!-- types -->
+<xs:simpleType name="stringType">
+	<xs:restriction base="xs:string" />
+</xs:simpleType>
+
+<xs:simpleType name="booleanType">
+	<xs:restriction base="xs:boolean" />
+</xs:simpleType>
+
+<!-- complex types -->
+<xs:complexType name="configType">
+	<xs:sequence>
+		<xs:element name="security" type="booleanType" minOccurs="0"/>
+		<xs:element name="login-page" type="stringType" minOccurs="0"/>
+		<xs:element name="navigation" type="booleanType" minOccurs="0"/>
+		<!-- Path from WEB-INF directory -->
+		<xs:element name="flows" type="flowsType">
+			<xs:key name="uniqueFlowName">
+				<xs:selector xpath="./flow"/>
+				<xs:field xpath="@name"/>
+			</xs:key>
+		</xs:element>
+		<!-- pomysly:
+		export do XML
+		timeout dla flowów
+		jezeli podziele framework na dwie części to ktore w uzyciu 
+		konfig - czy uzywac security?
+		 -->
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="flowsType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="flow" type="flowType"/>
+		</xs:choice>
+</xs:complexType>
+
+<xs:complexType name="flowType">
+	<xs:attribute name="name" type="stringType" use="required"/>
+	<xs:attribute name="location" type="stringType" use="required"/>
+</xs:complexType>
+</xs:schema>

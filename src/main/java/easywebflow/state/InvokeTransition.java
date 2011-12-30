@@ -21,6 +21,5 @@ public class InvokeTransition extends DecoratedTransition {
 		}
 		return s;
 	}
-	
-	
+
 }

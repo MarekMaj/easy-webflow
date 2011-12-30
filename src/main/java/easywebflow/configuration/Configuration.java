@@ -1,18 +1,11 @@
 package easywebflow.configuration;
 
-import java.io.*;
-import java.net.URL;
 import java.util.HashMap;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import easywebflow.config.FlowType;
+import easywebflow.security.SecurityConstraint;
 
-import easywebflow.parser.*;
-
-public class Configuration {
+public final class Configuration {
 
 	/* Musze miec, zalozenia:
 	 *  - czy uzywam XMl czy mojego formatu
@@ -24,74 +17,48 @@ public class Configuration {
 	 *  - jezeli bede zwracal juz gotowe pliki config, MainFactory nie musi nic wiedziec o tym skad pochodzi konfiguracja 
 	 *  i jest niezalezna od pakietu parser, XMLparser itp OK
 	 */  
-	 
+	
+	
+	private static final Object configFile = ConfigurationProcessor.processConfigurationFile();
+	private static final HashMap<String, String> configAttributes = ConfigurationProcessor.getConfigMap(configFile);
+	private static final HashMap<String, FlowType> flows = ConfigurationProcessor.getFlows(configFile);
+	private static final HashMap<StateIdentifier, SecurityConstraint> securedStatesMap = ConfigurationProcessor.getSecuredStates(flows);
+	private static final HashMap<String, StateIdentifier> viewToStateMap = ConfigurationProcessor.getViewToState(flows);
+	private static final HashMap<StateIdentifier, String> stateToViewMap = ConfigurationProcessor.reverseMap(viewToStateMap);
+	private static final Configuration instance = new Configuration();
+	
 	private Configuration(){}
 	
-	public static Object getFlows(){
-		return Configuration.processConfig();
+	public static Configuration getInstance(){
+		return instance;
 	}
-	
-	private static String getMainPath(){
-		String WEBINF = "WEB-INF";
-		String filePath = "";
-		URL url = Configuration.class.getResource("Configuration.class");
-		String className = url.getFile();
 
-	    filePath = className.substring(className.indexOf('/'), className.indexOf(WEBINF) + WEBINF.length());
-	    return filePath;
+	public static HashMap<String, String> getConfigAttributes() {
+		return configAttributes;
+	}
+
+	public static String getConfigAttributeByName(String name) {
+		return configAttributes.get(name);
 	}
 	
-	private static HashMap<String, String> getConfigMap(){
-		HashMap<String, String> map = new HashMap<String, String>();
-	
-		try {
-			String source = getMainPath() + "/config.xml";
-			System.out.println("Initializing Easy-Webflow Framework from file: " + source);
-			SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-			// TODO: zamienic na URI
-			Schema schema = factory.newSchema(new File("/dane/work/inz/framework/src/main/resources/config-schema.xsd"));
-			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(source));
-			
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = dbf.newDocumentBuilder();
-			Document doc = builder.parse(source);
-			Element element = doc.getDocumentElement();
-			
-			map.put("useXML", element.getElementsByTagName("useXML").item(0).getTextContent());
-			map.put("configFilePath", element.getElementsByTagName("configFilePath").item(0).getTextContent());
-			
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			System.out.println("zly format");
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static HashMap<String, FlowType> getFlows() {
+		return flows;
+	}
+
+	public static HashMap<StateIdentifier, SecurityConstraint> getSecuredStatesMap() {
+		if (configAttributes.get("security").equalsIgnoreCase("false") || securedStatesMap == null){
+			return new HashMap<StateIdentifier, SecurityConstraint>();
 		}
+		return securedStatesMap;
+	}
 
-		return map;
+	public static HashMap<String, StateIdentifier> getViewToStateMap() {
+		return viewToStateMap;
+	}
+
+	public static HashMap<StateIdentifier, String> getStateToViewMap() {
+		return stateToViewMap;
 	}
 	
-	private static Object processConfig(){
-		HashMap<String, String> map = getConfigMap();
-		Object ret = null;
 
-		try {
-			String path = getMainPath() + map.get("configFilePath");
-			ret = map.get("useXML").equals("false") ? PatternRecognizer.parseFile(path) : XMLParser.parseFile(path);
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return ret;	
-	}
-	
 }

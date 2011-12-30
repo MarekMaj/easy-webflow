@@ -13,7 +13,13 @@ public abstract class DecoratedState implements State {
 	}
 
 	@Override
-	public String onTransition(String name) {
+	public String getStateNameForTransition(String name)
+			throws IllegalTransitionException {
+		return delegate.getStateNameForTransition(name);
+	}
+	
+	@Override
+	public String onTransition(String name) throws IllegalTransitionException{
 		return delegate.onTransition(name);
 	}
 

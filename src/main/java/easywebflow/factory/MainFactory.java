@@ -5,38 +5,25 @@ import java.util.Set;
 
 import easywebflow.configuration.Configuration;
 import easywebflow.core.Flow;
-import easywebflow.config.FlowConfig;
-import easywebflow.state.StateContext;
+import easywebflow.core.FlowInitializingData;
+import easywebflow.config.FlowType;
 
 public class MainFactory {
 	
-	private static StateContextFactory scf = new StateContextFactory();
-	private static MainFactory instance;
-	private static HashMap<String, FlowConfig> flows;
+	private final FlowContextFactory fcf = new FlowContextFactory();
 
-	private MainFactory(){
-		parseConfig();
-	}
-	
-	public static MainFactory getInstance(){
-		if (instance == null){
-			instance = new MainFactory();
-		}
-		return instance;
-	}
-	
-	private static void parseConfig(){
-		//flows = PatternRecognizer.parseFile(getConfigFilePath());
-		flows = (HashMap<String, FlowConfig>) Configuration.getFlows();
-	}
-
+	public MainFactory(){}
 	/*tworzy nowy flow*/
 	//static ? 
-	public static StateContext getStateContext(Flow flow, String flowName){
-		return scf.create(flow, flows.get(flowName));
-	}
-	
-	public static Set<String> getFlowNames(){
+	// TODO nie stateContext ale flow Context - potrzebuje jeszcze info o inicjalizacji niektorywch beanow
+
+	public FlowInitializingData getFlowContext(Flow flow, String flowName){
+		HashMap<String, FlowType> flows = Configuration.getInstance().getFlows(); 
+		return fcf.create(flow, flows.get(flowName));
+	}	
+
+	public Set<String> getFlowNames(){
+		HashMap<String, FlowType> flows = Configuration.getInstance().getFlows(); 
 		return flows.keySet();
 	}
 	

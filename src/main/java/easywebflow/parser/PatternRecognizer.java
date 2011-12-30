@@ -7,9 +7,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import easywebflow.config.*;
+import easywebflow.config_old.*;
 
-public class PatternRecognizer {
+public final class PatternRecognizer {
 	
 	private static final String whitespace = "\\s+";
 	private static final String white = "\\s*";
@@ -46,8 +46,10 @@ public class PatternRecognizer {
 	/*description:	*/
 	private static final String decisionGroup = "(?:("+"(?:"+invokeGroup+")?" +"(?:"+ifGroup+")+" + elseGroup +"))";
 	
-
-
+	// Suppress default constructor for noninstantiability
+	private PatternRecognizer(){
+		throw new AssertionError();
+	}
 
 	
 	public static HashMap<String, FlowConfig> parseFile(String fileName) throws FileNotFoundException{

@@ -1,12 +1,12 @@
 package easywebflow.factory;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 import easywebflow.core.Flow;
-import easywebflow.config.StateConfig;
-import easywebflow.config.TransitionConfig;
+import easywebflow.config.StateType;
+import easywebflow.config.TransitionType;
+import easywebflow.state.ExitInvocationState;
 import easywebflow.state.SimpleState;
 import easywebflow.state.StartInvocationState;
 import easywebflow.state.State;
@@ -17,19 +17,24 @@ public class StateFactory {
 	private CommandFactory cf = new CommandFactory();
 	private TransitionFactory tf = new TransitionFactory();
 	
-	public State create(Flow flow, StateConfig sc) {
-		HashMap<String, Transition> transitionMap = new HashMap<String, Transition>();
-		Iterator<Entry<String, TransitionConfig>> it = sc.getTransitions().entrySet().iterator();
+	public State create(Flow flow, StateType st) {
+		// after SCXML integration cannot use hashmap 
+		ArrayList<Transition> transitionList = new ArrayList<Transition>();
+		Iterator<TransitionType> it = st.getTransition().iterator();
 		
 		while (it.hasNext()){
-			Entry<String, TransitionConfig> entry = it.next();
-			transitionMap.put(entry.getKey(), tf.create(flow, entry.getValue()));
+			TransitionType tt = it.next();
+			transitionList.add(tf.create(flow, tt));
 		}
 		
-		State state = new SimpleState(sc.getName(), transitionMap);
+		State state = new SimpleState(st.getId(), transitionList);
 		
-		if (sc.getOnStartCommands() != null){
-			state = new StartInvocationState(state, cf.create(flow, sc.getOnStartCommands()));
+		if (st.getOnentry() != null){
+			state = new StartInvocationState(state, cf.create(flow, st.getOnentry()));
+		}
+		
+		if (st.getOnexit() != null){
+			state = new ExitInvocationState(state, cf.create(flow, st.getOnexit()));
 		}
 		
 		return state;

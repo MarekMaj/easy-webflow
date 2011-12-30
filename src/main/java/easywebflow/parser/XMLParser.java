@@ -15,11 +15,14 @@ import javax.xml.validation.Validator;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import easywebflow.config.*;
+import easywebflow.config_old.*;
 
-public class XMLParser {
+public final class XMLParser {
 
-	private XMLParser(){}
+	// Suppress default constructor for noninstantiability
+	private XMLParser(){
+		throw new AssertionError();
+	}
 	
 	public static Object parseFile(String filename) throws IOException {
 		return validateXMLFile(filename) ? parseFlows(getRootElement(filename)) : null;

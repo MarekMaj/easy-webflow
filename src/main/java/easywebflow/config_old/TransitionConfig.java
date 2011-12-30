@@ -1,4 +1,4 @@
-package easywebflow.config;
+package easywebflow.config_old;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
