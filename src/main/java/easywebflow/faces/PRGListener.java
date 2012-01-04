@@ -15,10 +15,6 @@ public class PRGListener implements PhaseListener{
 
 	@Override
 	public void beforePhase(PhaseEvent event) {
-		// jezeli POST to:
-		// sprawdz czy pojawily sie jakies bledy
-		// jezeli tak to nic nie rob 
-		// jezeli nie to PGR do nowego widoku
 		// TODO to wciaz nie chroni przed kilkukrotnym wyslaniem danych jezeli uzytkownik odswiezy POST request
 		
 		FacesContext facesContext = event.getFacesContext();
@@ -28,8 +24,12 @@ public class PRGListener implements PhaseListener{
 		// if Method is POST
 		if (request.getMethod().equalsIgnoreCase("post")){
 			System.out.println("To jest POST");
-			// if none of components (clients) have been assigned messages and ALSO there are no unassigned messages 
-			if (facesContext.getMessageList().isEmpty()){
+			System.out.println("partial: " +facesContext.getPartialViewContext().isPartialRequest());
+			System.out.println("walidacja failed: " +facesContext.isValidationFailed());
+		
+			// if validation ok and not an ajax request try redirect
+			if (!facesContext.isValidationFailed() && !facesContext.getPartialViewContext().isPartialRequest()){
+				// TODO save all assigned and unassigned messages
 				// redirect to appropriate URL
 				String url = facesContext.getApplication().getViewHandler().getActionURL(facesContext, facesContext.getViewRoot().getViewId());
 				try {

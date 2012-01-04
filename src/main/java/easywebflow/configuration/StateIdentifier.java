@@ -34,4 +34,13 @@ public class StateIdentifier {
 		return (sId.getStateName().equals(this.getStateName()) && sId.getFlowName().equals(this.getFlowName()));
 	}
 	
+	@Override
+	public int hashCode() {
+		int result = 17;
+        
+        result = 37 * result + this.getFlowName().hashCode();
+        result = 37 * result + this.getStateName().hashCode();
+        
+        return result;
+	}
 }

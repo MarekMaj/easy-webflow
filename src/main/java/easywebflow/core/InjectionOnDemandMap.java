@@ -76,7 +76,8 @@ public class InjectionOnDemandMap<K, V> extends ConcurrentHashMap<K, V> {
 		System.out.println("tworze model "+ key.toString());
 		Set<Bean<?>> set = beanManager.getBeans(key.toString());
 		if (set.isEmpty()){
-			// TODO tutaj jakis exception
+			// TODO tutaj jakis exception bo CDI tego nie rozwiaze, moze nie wiedziec ze jest taki bean a wiec nie bedzie 
+			// unsatisfied dependency
 
 		}else{
 

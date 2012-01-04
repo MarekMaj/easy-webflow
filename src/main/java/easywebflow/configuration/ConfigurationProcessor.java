@@ -178,9 +178,9 @@ public final class ConfigurationProcessor {
 				// if viewId specified
 				if (st.getDatamodel() != null && st.getDatamodel().getViewId() != null)
 					views.put(st.getDatamodel().getViewId(), new StateIdentifier(ft.getName(), st.getId()));
-				// otherwise viewId = flowName/stateId
+				// otherwise viewId = stateId
 				else 
-					views.put(new String(ft.getName()+'/'+st.getId()), new StateIdentifier(ft.getName(), st.getId()));
+					views.put(new String(st.getId()), new StateIdentifier(ft.getName(), st.getId()));
 			}
 		}
 		return views;
