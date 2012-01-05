@@ -16,18 +16,13 @@ public class TransitionFactory {
 		Transition transition = new SimpleTransition(tt.getEvent(), tt.getTarget());
 		
 		// add invokes
-		if( tt.getInvoke()!= null){
+		if( !tt.getInvoke().isEmpty()){
 			transition = new InvokeTransition(transition, cf.create(flow, tt.getInvoke()));
 		}
 		
 		// add condition rule
-		if (tt.getCond() != null){
-			// TODO how to model cond attribute in transition ? 
-			// parse here or during XML binding 
-			// moze stworzyc invokationType(bean, method) i podac do create(flow, it, comparedString)
-			String comparedString = tt.getCond();
-			
-			transition = new ConditionalTransition(transition, cf.create(flow, new InvokationType() , comparedString));
+		if (tt.getComparedObject()!= null && tt.getComparedValue()!=null){
+			transition = new ConditionalTransition(transition, cf.create(flow, tt.getComparedObject() , tt.getComparedValue()));
 		}
 			
 		return transition;

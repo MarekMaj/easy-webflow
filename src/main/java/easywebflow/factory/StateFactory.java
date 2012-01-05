@@ -29,11 +29,11 @@ public class StateFactory {
 		
 		State state = new SimpleState(st.getId(), transitionList);
 		
-		if (st.getOnentry() != null){
+		if (!st.getOnentry().isEmpty()){
 			state = new StartInvocationState(state, cf.create(flow, st.getOnentry()));
 		}
 		
-		if (st.getOnexit() != null){
+		if (!st.getOnexit().isEmpty()){
 			state = new ExitInvocationState(state, cf.create(flow, st.getOnexit()));
 		}
 		

@@ -10,9 +10,12 @@ package easywebflow.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -49,9 +52,13 @@ public class TransitionType {
     protected String target;
     @XmlAttribute(required = true)
     protected String event;
-    @XmlAttribute
+    @XmlTransient
     protected String cond;
-
+    @XmlTransient
+    protected String comparedObject;
+    @XmlTransient
+    protected String comparedValue;
+    
     /**
      * Gets the value of the invoke property.
      * 
@@ -62,7 +69,7 @@ public class TransitionType {
      * This is why there is not a <CODE>set</CODE> method for the invoke property.
      * 
      * <p>
-     * For example, to add a new item, do as follows:
+     * For example, to add a new item, do as follows:@XmlAttribute
      * <pre>
      *    getInvoke().add(newItem);
      * </pre>
@@ -137,8 +144,9 @@ public class TransitionType {
      *     {@link String }
      *     
      */
+    @XmlAttribute
     public String getCond() {
-        return cond;
+        return new String(this.comparedObject+"=="+this.comparedValue);
     }
 
     /**
@@ -150,7 +158,25 @@ public class TransitionType {
      *     
      */
     public void setCond(String value) {
-        this.cond = value;
+    	this.cond = value;
+    	StringTokenizer st = new StringTokenizer(value, "==");
+        this.comparedObject = st.nextToken().trim();
+        this.comparedValue = st.nextToken().trim();        
     }
 
+    public String getComparedValue() {
+		return comparedValue;
+	}
+    
+    public void setComparedValue(String comparedValue) {
+		this.comparedValue = comparedValue;
+	}
+    
+    public String getComparedObject() {
+		return comparedObject;
+	}
+    
+    public void setComparedObject(String comparedObject) {
+		this.comparedObject = comparedObject;
+	}
 }

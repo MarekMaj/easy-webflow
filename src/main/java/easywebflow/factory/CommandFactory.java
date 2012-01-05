@@ -37,11 +37,9 @@ public class CommandFactory {
 	}
 
 	/*method for compareCommand*/
-	public Command create(Flow flow, InvokationType invokationType,
-			String comparedString) {
-		// TODO dostosowac zmiany do modelu cond
-		// pomyśleć nad zastosowaniem dekoratora w Command
-		return new CompareCommand(flow, invokationType.getBean(), comparedString);
+	public Command create(Flow flow, String comparedObject,
+			String comparedValue) {
+		return new CompareCommand(flow, comparedObject, comparedValue);
 	}
 
 
