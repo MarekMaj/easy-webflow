@@ -2,11 +2,6 @@ package easywebflow.faces;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
@@ -21,7 +16,6 @@ import easywebflow.security.SecurityData;
 public class SecurityListener implements PhaseListener {
 
 	private static final String PRE_LOGIN_PAGE_VIEW = "easywebflow-preLoginPage-view";
-	private static final String PRE_LOGIN_PAGE_PARAMS = "easywebflow-preLoginPage-params";
 	private SecurityData securityData = new SecurityData(); 
 	private NamingTranslator translator = new NamingTranslator();
 
@@ -32,7 +26,7 @@ public class SecurityListener implements PhaseListener {
 	public void beforePhase(PhaseEvent event) {
 		System.out.println("SECURITY LISTENER: START...");
 		FacesContext facesContext = event.getFacesContext();
-		String view = facesContext.getViewRoot().getViewId();;
+		String view = facesContext.getViewRoot().getViewId();
 		// TODO what if post afer something .. rethink
 
 		// user is authenticated and there is a PRE_LOGIN_PAGE_VIEW in session parameters
@@ -58,12 +52,13 @@ public class SecurityListener implements PhaseListener {
 			facesContext.responseComplete();
 		}
 		// user allowed to display page - if not login page ? 
-		else if (!view.substring(1, view.indexOf(".xhtml")).equals(Configuration.getConfigAttributeByName("login-page"))){
+		else if (!substringView(view).equals(Configuration.getConfigAttributeByName("login-page"))){
 			// user resigned from login
+			System.out.println("not login page - clear map");
 			clearSessionMap(facesContext);
 		}
 		// else display anything
-		
+
 		System.out.println("SECURITY LISTENER: FINISH");
 	}
 
@@ -81,21 +76,20 @@ public class SecurityListener implements PhaseListener {
 	 * @return
 	 */
 	private Boolean checkSecurity(FacesContext facesContext, String view){
-		String viewId = view.substring(1, view.indexOf(".xhtml"));
-		System.out.println("ViewId: "+viewId); 
-		
+		String viewId = substringView(view);
+		System.out.println("SECURITY checking ViewId: "+viewId); 
+
 		// if state exists
 		if (translator.getStateForView(viewId) != null){
 			// extract security constraints assigned to this view/state
 			SecurityConstraint constraint = securityData.getSecurityConstraint(translator.getStateForView(viewId));
 
 			HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-
 			// state is not secured
 			if (constraint.getRoleNamesAllowed().isEmpty()){
 				return true;
 			}
-			
+
 			// check if user is in any of permitted roles
 			for (String s:constraint.getRoleNamesAllowed()){
 				if (request.isUserInRole(s)){
@@ -107,12 +101,20 @@ public class SecurityListener implements PhaseListener {
 		return true;
 	}
 
+	private String substringView(String view){
+		int position = ((view.indexOf(".xhtml") > 0) ? view.indexOf(".xhtml") 
+				: (view.indexOf(".jsf") > 0) ? view.indexOf(".jsf") 
+						: 0);
+		
+		return view.substring(0, position);
+	}
+	
 	/**
 	 * Sets redirection to login page. After invokation of this method response should be completed.
 	 * @param context
 	 */
 	private void redirectToLoginPage(FacesContext context){
-		System.out.println("Security - login Page");
+		System.out.println("SECURITY - redirect to login Page");
 		String loginPage = Configuration.getConfigAttributeByName("login-page");
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(
@@ -129,28 +131,24 @@ public class SecurityListener implements PhaseListener {
 	 * @throws IOException 
 	 */
 	private String loadPreviousDestination(FacesContext context){
+		System.out.println("SECURITY - Loading previous view");
+		
 		String url = (String)context.getExternalContext().getSessionMap().get(PRE_LOGIN_PAGE_VIEW);
-		Map<String, List<String>> params = this.getParamsFromSessionMap(context);
-		
-		return context.getApplication().getViewHandler().getRedirectURL(context, url, params, params.size() >0);
-	}
+		//Map<String, List<String>> params = (Map<String, List<String>>) context.getExternalContext().getSessionMap().get(PRE_LOGIN_PAGE_VIEW);
 
-	@SuppressWarnings("unchecked")
-	private Map<String, List<String>> getParamsFromSessionMap(
-			FacesContext context) {
-		Map<String, String[]> map = (Map<String, String[]>) context.getExternalContext().getSessionMap().get(PRE_LOGIN_PAGE_PARAMS);
-		Map<String, List<String>> returnMap = new HashMap<String, List<String>>();
-		
-		for (Entry<String, String[]> entry :map.entrySet()){
-			ArrayList<String> l = new ArrayList<String>();
-			for (String s:entry.getValue()){
-				l.add(s);
+		//if (params!=null && !params.isEmpty()){
+			try {
+				// TODO params do not work
+				//context.getExternalContext().redirect(context.getExternalContext().encodeRedirectURL(url, params));
+				context.getExternalContext().redirect(context.getExternalContext().encodeActionURL(url));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			returnMap.put(entry.getKey(), l);
-		}
-		return returnMap;
+		//}
+		
+		return url;
 	}
-
+	
 	/**
 	 * Clears session map with previous page attribute.
 	 *   
@@ -158,18 +156,17 @@ public class SecurityListener implements PhaseListener {
 	 */
 	private void clearSessionMap(FacesContext context){
 		context.getExternalContext().getSessionMap().remove(PRE_LOGIN_PAGE_VIEW);
-		context.getExternalContext().getSessionMap().remove(PRE_LOGIN_PAGE_PARAMS);
+		
 	}
-	
+
 	/**
 	 * Saves previous destination that user wanted to follow but login was required.
 	 * Should be invoked before redirection to login page.
 	 */
 	private void saveCurrentDestination(FacesContext context){
-		
 		context.getExternalContext().getSessionMap().put(PRE_LOGIN_PAGE_VIEW, 
 				context.getApplication().getViewHandler().getActionURL(context, context.getViewRoot().getViewId()));
-		context.getExternalContext().getSessionMap().put(PRE_LOGIN_PAGE_PARAMS, 
-				context.getExternalContext().getRequestParameterValuesMap());
+		// TODO context.getExternalContext().getSessionMap().put(PRE_LOGIN_PAGE_VIEW, context.getApplication().getViewHandler().getRedirectURL(context, context.getViewRoot().getViewId(),createMapFromRequestParams(context), (createMapFromRequestParams(context).size() >0)));
+
 	}
 }

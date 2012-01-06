@@ -22,16 +22,15 @@ public class PRGListener implements PhaseListener{
 		HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 		System.out.println("PRG LISTENER: START...");
 		// if Method is POST
-		if (request.getMethod().equalsIgnoreCase("post")){
-			System.out.println("To jest POST");
-			System.out.println("partial: " +facesContext.getPartialViewContext().isPartialRequest());
-			System.out.println("walidacja failed: " +facesContext.isValidationFailed());
-		
+		if (!facesContext.getResponseComplete() && request.getMethod().equalsIgnoreCase("post")){
+
 			// if validation ok and not an ajax request try redirect
 			if (!facesContext.isValidationFailed() && !facesContext.getPartialViewContext().isPartialRequest()){
 				// TODO save all assigned and unassigned messages
+				
 				// redirect to appropriate URL
 				String url = facesContext.getApplication().getViewHandler().getActionURL(facesContext, facesContext.getViewRoot().getViewId());
+				System.out.println("PRG - redirect to "+url);
 				try {
 					facesContext.getExternalContext().redirect(url);
 				} catch (IOException e) {
