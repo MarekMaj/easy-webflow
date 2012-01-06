@@ -15,10 +15,11 @@
 
 <!-- complex types -->
 <xs:complexType name="configType">
-	<xs:sequence>
+	<xs:all>
 		<xs:element name="security" type="booleanType" minOccurs="0"/>
 		<xs:element name="login-page" type="stringType" minOccurs="0"/>
 		<xs:element name="navigation" type="booleanType" minOccurs="0"/>
+		<xs:element name="PRG" type="booleanType" minOccurs="0"/>
 		<!-- Path from WEB-INF directory -->
 		<xs:element name="flows" type="flowsType">
 			<xs:key name="uniqueFlowName">
@@ -30,9 +31,8 @@
 		export do XML
 		timeout dla flowów
 		jezeli podziele framework na dwie części to ktore w uzyciu 
-		konfig - czy uzywac security?
 		 -->
-	</xs:sequence>
+	</xs:all>
 </xs:complexType>
 
 <xs:complexType name="flowsType">

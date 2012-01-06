@@ -10,16 +10,14 @@ public class StateContext implements Serializable{
 	
 	private LinkedHashMap<String, State> states;
 	private State currentState;
-	private String endStateName;
 	private String flowName;
 	
 	public StateContext(){}
 	
-	public StateContext(LinkedHashMap<String, State> states, String startStateName, String endStateName, String flowName) {
+	public StateContext(LinkedHashMap<String, State> states, String startStateName, String flowName) {
 		super();
 		this.states = states;
 		this.currentState = states.get(startStateName); 
-		this.endStateName = endStateName;
 		this.flowName = flowName;
 	}
 
@@ -28,7 +26,6 @@ public class StateContext implements Serializable{
 		// nie moge go wstrzyknac ale moge sprawdzuc gdzie zostalem wstrzykniety - NIE! tylko metadata a potrzebowałbym instacji
 		this.states = stateContext.states;
 		this.currentState = stateContext.currentState; 
-		this.endStateName = stateContext.endStateName;
 		this.flowName = stateContext.flowName;
 		
 	}
@@ -44,7 +41,7 @@ public class StateContext implements Serializable{
 		// po zalogowaniu zostanie przwywrocna obecna strona i juz 
 		
 		// when end state then return null
-		if (currentState.getName().equalsIgnoreCase(endStateName)){
+		if (currentState.isFinal()){
 			currentState.onExit();
 			return null;
 		}

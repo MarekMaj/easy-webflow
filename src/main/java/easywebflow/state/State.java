@@ -6,4 +6,5 @@ public interface State {
 	String getStateNameForTransition(String name) throws IllegalTransitionException;
 	void onExit();
 	String getName();
+	Boolean isFinal();
 }

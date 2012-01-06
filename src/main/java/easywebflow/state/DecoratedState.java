@@ -32,5 +32,10 @@ public abstract class DecoratedState implements State {
 	public String getName() {
 		return delegate.getName();
 	}
+	
+	@Override
+	public Boolean isFinal() {
+		return delegate.isFinal();
+	}
 
 }

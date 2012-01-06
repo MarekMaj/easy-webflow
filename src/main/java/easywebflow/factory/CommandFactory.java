@@ -17,7 +17,7 @@ public class CommandFactory {
 		if (!paramList.isEmpty()){
 			params = new String[paramList.size()];
 			for (int i=0; i < paramList.size(); i++){
-				params[i] = new String(paramList.get(i).getBeanName());
+				params[i] = new String(paramList.get(i).getBean());
 			}
 		}
 

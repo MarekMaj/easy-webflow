@@ -79,8 +79,9 @@ public final class ConfigurationProcessor {
 	
 		// if element is missing it is 'true' by default
 		map = putElement(element, map, "security", "true");
-		map = putElement(element, map, "login-page", "/login.xhtml");
+		map = putElement(element, map, "login-page", "/login");
 		map = putElement(element, map, "navigation", "true");
+		map = putElement(element, map, "PRG", "true");
 		
 		return map;
 	}
@@ -141,7 +142,7 @@ public final class ConfigurationProcessor {
 					flowRoles = new ArrayList<String>(ft.getDatamodel().getSecured().getRoleName());
 			}
 			
-			for (StateType st: ft.getState()){
+			for (StateType st: ft.getStates()){
 				StateIdentifier sId = new StateIdentifier(ft.getName(), st.getId());
 				ArrayList<String> secList = null;
 				
@@ -174,7 +175,7 @@ public final class ConfigurationProcessor {
 		HashMap<String, StateIdentifier> views = new HashMap<String,StateIdentifier>();
 		
 		for (FlowType ft: map.values()){
-			for (StateType st: ft.getState()){
+			for (StateType st: ft.getStates()){
 				// if viewId specified
 				if (st.getDatamodel() != null && st.getDatamodel().getViewId() != null)
 					views.put(st.getDatamodel().getViewId(), new StateIdentifier(ft.getName(), st.getId()));

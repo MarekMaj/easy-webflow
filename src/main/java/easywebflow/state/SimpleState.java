@@ -6,9 +6,11 @@ public class SimpleState implements State {
 
 	private String name;
 	private List<Transition> transitionList;
+	private Boolean finalState;
 	
-	public SimpleState(String name, List<Transition> list) {
+	public SimpleState(String name, Boolean finalState, List<Transition> list) {
 		this.name = name;
+		this.finalState = finalState;
 		this.transitionList = list;
 	}
 
@@ -52,4 +54,9 @@ public class SimpleState implements State {
 		return name;
 	}
 
+	@Override
+	public Boolean isFinal() {
+		return this.finalState;
+	}
+	
 }

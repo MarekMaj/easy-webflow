@@ -27,7 +27,7 @@ public class StateFactory {
 			transitionList.add(tf.create(flow, tt));
 		}
 		
-		State state = new SimpleState(st.getId(), transitionList);
+		State state = new SimpleState(st.getId(), st.isFinalState(), transitionList);
 		
 		if (!st.getOnentry().isEmpty()){
 			state = new StartInvocationState(state, cf.create(flow, st.getOnentry()));

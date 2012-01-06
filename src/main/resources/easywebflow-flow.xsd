@@ -1,101 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<!-- root element -->
-<xs:element name="scxml" type="flowType">
-	<xs:key name="uniqueStateName">
-		<xs:selector xpath="./state | ./final"/>
-		<xs:field xpath="@id"/>
-	</xs:key>
-	<xs:key name="uniqueViewName">
-		<xs:selector xpath="./state/datamodel | ./final/datamodel"/>
-		<xs:field xpath="viewId"/>
-	</xs:key>
-	<!--States that do not specify viewName, have by default viewName equal its stateName. That value has to be unique in set of viewName. -->
-</xs:element>
+	<!-- root element -->
+	<xs:element name="scxml" type="flowType">
+		<xs:key name="uniqueStateName">
+			<xs:selector xpath="./state | ./final" />
+			<xs:field xpath="@id" />
+		</xs:key>
+		<xs:key name="uniqueViewName">
+			<xs:selector xpath="./state/datamodel | ./final/datamodel" />
+			<xs:field xpath="viewId" />
+		</xs:key>
+		<!--States that do not specify viewName, have by default viewName equal 
+			to their stateName. That value has to be unique in set of viewName. -->
+	</xs:element>
 
-<!-- TODO -->
-<xs:simpleType name="NumberCodeValueType">
-        <xs:restriction base="xs:int">
-            <xs:pattern value="[0-7]{7}" />
-        </xs:restriction>
-</xs:simpleType>
+	<!-- types -->
+	<xs:simpleType name="stringType">
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
 
-<!-- types -->
-<xs:simpleType name="stringType">
-	<xs:restriction base="xs:string"/>
-</xs:simpleType>
+	<!-- complex types -->
+	<xs:complexType name="flowType">
+		<xs:sequence>
+			<xs:element name="datamodel" type="flowData" />
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="state" type="stateType" minOccurs="0"/>
+				<xs:element name="final" type="stateType" minOccurs="0"/>
+			</xs:sequence>
+		</xs:sequence>
+		<xs:attribute name="name" type="stringType" use="required" />
+		<xs:attribute name="initial" type="stringType" use="required" />
+	</xs:complexType>
 
-<!-- complex types -->
-<xs:complexType name="flowType">
-	<xs:sequence>
-		<xs:element name="datamodel" type="flowData"/>
-		<xs:element name="state" type="stateType" maxOccurs="unbounded"/>
-		<xs:element name="final" type="stateType"/>
-	</xs:sequence>
-	<xs:attribute name="name" type="stringType" use="required"/>
-	<xs:attribute name="initial" type="stringType" use="required"/>
-</xs:complexType>
+	<xs:complexType name="stateType">
+		<xs:sequence>
+			<xs:element name="datamodel" type="stateData" minOccurs="0" />
+			<xs:element name="onentry" type="invokationList"
+				minOccurs="0" />
+			<xs:element name="onexit" type="invokationList" minOccurs="0" />
+			<xs:element name="transition" type="transitionType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="stringType" use="required" />
+	</xs:complexType>
 
-<xs:complexType name="stateType">
-	<xs:sequence>
-		<xs:element name="datamodel" type="stateData" minOccurs="0"/>
-		<xs:element name="onentry" type="invokationList" minOccurs="0"/>
-		<xs:element name="transition" type="transitionType" minOccurs="0" maxOccurs="unbounded"/>
-		<xs:element name="onexit" type="invokationList" minOccurs="0"/>
-	</xs:sequence>
-	<xs:attribute name="id" type="stringType" use="required"/>
-</xs:complexType>
+	<xs:complexType name="flowData">
+		<xs:sequence>
+			<xs:element name="secured" type="securedType" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="data" type="stringType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
 
-<xs:complexType name="flowData">
-	<xs:sequence>
-		<xs:element name="data" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
-		<xs:element name="secured" type="securedType" minOccurs="0"/>
-	</xs:sequence>
-</xs:complexType>
+	<xs:complexType name="stateData">
+		<xs:all>
+			<xs:element name="viewId" type="stringType" minOccurs="0" />
+			<xs:element name="secured" type="securedType" minOccurs="0" />
+		</xs:all>
+	</xs:complexType>
 
-<xs:complexType name="stateData">
-	<xs:sequence>
-		<xs:element name="viewId" type="stringType" minOccurs="0"/>
-		<xs:element name="secured" type="securedType" minOccurs="0"/>
-	</xs:sequence>
-</xs:complexType>
+	<xs:complexType name="securedType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="roleName" type="stringType" />
+		</xs:choice>
+	</xs:complexType>
 
-<xs:complexType name="securedType">
-	<xs:choice maxOccurs="unbounded">
-		<xs:element name="roleName" type="stringType"/>
-	</xs:choice>
-</xs:complexType>
+	<xs:complexType name="transitionType">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="invoke" type="invokationType" />
+		</xs:choice>
+		<xs:attribute name="target" type="stringType" use="required" />
+		<xs:attribute name="event" type="stringType" use="required" />
+		<xs:attribute name="cond" type="stringType" use="optional" />
+	</xs:complexType>
 
-<xs:complexType name="transitionType">
-	<xs:choice minOccurs="0" maxOccurs="unbounded">
-		<xs:element name="invoke" type="invokationType"/>
-	</xs:choice>
-	<xs:attribute name="target" type="stringType" use="required"/>
-	<xs:attribute name="event" type="stringType" use="required"/>
-	<xs:attribute name="cond" type="stringType" use="optional"/>
-</xs:complexType>
+	<xs:complexType name="invokationList">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="invoke" type="invokationType" />
+		</xs:choice>
+	</xs:complexType>
 
-<xs:complexType name="invokationList">
-	<xs:choice maxOccurs="unbounded">
-		<xs:element name="invoke" type="invokationType"/>
-	</xs:choice>
-</xs:complexType>
+	<xs:complexType name="invokationType">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="param" type="paramType" />
+		</xs:choice>
+		<xs:attribute name="bean" type="stringType" use="required" />
+		<xs:attribute name="method" type="stringType" use="required" />
+		<xs:attribute name="result" type="stringType" use="optional" />
+	</xs:complexType>
 
-<xs:complexType name="invokationType">
-	<xs:sequence>
-		<xs:element name="param" type="paramType" minOccurs="0" maxOccurs="unbounded"/>
-	</xs:sequence>
-	<xs:attribute name="bean" type="stringType" use="required"/>
-	<xs:attribute name="method" type="stringType" use="required"/>
-	<xs:attribute name="result" type="stringType" use="optional"/>
-</xs:complexType>
-
-<xs:complexType name="paramType">
-	<xs:sequence>
-		<xs:element name="beanName" type="stringType"/>
-		<!-- <xs:element name="methodName" type="stringType" minOccurs="0"/> -->
-	</xs:sequence>
-</xs:complexType>
+	<xs:complexType name="paramType">
+		<xs:attribute name="bean" type="stringType" use="required" />
+		<!-- <attribute name="methodName" type="stringType" use="optional"/> -->
+	</xs:complexType>
 
 </xs:schema>
