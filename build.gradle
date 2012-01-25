@@ -4,7 +4,7 @@ apply plugin: 'maven'
 
 sourceCompatibility = 1.6
 group = 'org.easy-webflow'
-version = '0.9.0-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 def localMavenRepo = new File('/home/marc/.m2/repository').toURL().toString()
 
@@ -43,7 +43,7 @@ artifacts {
 uploadArchives {
 	repositories.mavenDeployer {
 		repository(url: "file://home/marc/.m2/repository/")
-		/*dlaczego to nie dziala ????? */
+		/*nie dziala */
 		pom.project {
 			url = 'http://github.com/MarekMaj/easy-webflow'
 

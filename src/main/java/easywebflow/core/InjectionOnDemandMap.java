@@ -67,13 +67,18 @@ public class InjectionOnDemandMap<K, V> extends ConcurrentHashMap<K, V> {
 	}
 	
 	@Override
+	public boolean containsKey(Object key) {
+		return super.containsKey(key);
+	}
+	
+	@Override
 	public V put(K key, V value) {
+		this.classInfo.put(key, value.getClass());
 		return super.put(key, value);
 	}
 
 	@SuppressWarnings("unchecked")
 	private synchronized void createModel(Object key) {
-		System.out.println("tworze model "+ key.toString());
 		Set<Bean<?>> set = beanManager.getBeans(key.toString());
 		if (set.isEmpty()){
 			// TODO tutaj jakis exception bo CDI tego nie rozwiaze, moze nie wiedziec ze jest taki bean a wiec nie bedzie 
@@ -83,12 +88,13 @@ public class InjectionOnDemandMap<K, V> extends ConcurrentHashMap<K, V> {
 
 				Bean<?> bean = set.iterator().next();
 				Class<?> clazz = bean.getBeanClass();
+				/*
 				System.out.println("Class to create: "+clazz);
 				System.out.println(bean.getStereotypes());
 				System.out.println(bean.getTypes());
 				System.out.println(bean.getQualifiers());
 				System.out.println(bean.getScope());
-
+				*/
 				try {
 					Object obj = clazz.newInstance();;
 					super.put((K)key, (V) obj);

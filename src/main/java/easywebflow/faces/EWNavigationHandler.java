@@ -20,10 +20,9 @@ public class EWNavigationHandler extends NavigationHandler implements FacesWrapp
 	public void handleNavigation(FacesContext context, String fromAction,
 			String outcome) {
 		
-		System.out.println("NavigationHandler start: " + outcome + " action: " +fromAction);
+		//System.out.println("NavigationHandler start: " + outcome + " action: " +fromAction);
 		// if outcome == null the same page should be redisplayed
 		if (outcome == null){
-			System.out.println("NavigationHandler przekazuje:" + outcome);
 			this.wrappedNavigationHandler.handleNavigation(context, fromAction, outcome);
 			return;
 		}

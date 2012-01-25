@@ -59,7 +59,6 @@ public class FlowImpl implements Flow, Serializable {
 
 	@PostConstruct
 	public void initializeFlowContext(){
-		System.out.println("Flow post construct:" + flowName);
 		// może lepiej wstrzyknąć StateContext - wtedy w nim odnoszę się do MainFactory i mogę definiować interceptory
 		// tutaj chyba będę potrzebowal flowContext 
 		// w którym oprócz stateContext będę miał dataModel
@@ -134,7 +133,7 @@ public class FlowImpl implements Flow, Serializable {
 		// if this is last state end flow and return param name
 		// this way user can define view that has to be displayed after flow finishes
 		if (outcome == null){
-			System.out.println( "koncze flow");
+			//System.out.println( "koncze flow");
 			// If flow already finished 
 			if (!conversation.isTransient()){
 				conversation.end();
@@ -148,11 +147,9 @@ public class FlowImpl implements Flow, Serializable {
 	@Override
 	public Object invoke(String beanName, String methodName,
 			String... paramName) {
-		System.out.println("*******************");
-		System.out.println("invoke by flow: " + beanName + " " +methodName + " " +paramName );
-		
+
 		// if bean does not exist in flow data inject external service
-		if (!this.map.contains(beanName))
+		if (!this.map.containsKey(beanName))
 			this.map.injectExternal(beanName);
 		// get instance of bean
 		Object bean = this.map.get(beanName);
@@ -162,15 +159,11 @@ public class FlowImpl implements Flow, Serializable {
 		ArrayList<Class> paramClass = new ArrayList<Class>();		
 		for (String s:paramName){
 			if (s != null){
-				System.out.println("dodaje: "+s);
-				
 				paramObjects.add(this.map.get(s));
 				paramClass.add(this.map.getClassInfo(s));
-				//System.out.println("dodalem: "+s);
 			}
 		}
 		
-		// TODO tutaj chyba w tej samej metodzie
 		return invokeInternally(bean, beanClass, methodName, paramObjects, paramClass);
 	}
 
@@ -178,17 +171,10 @@ public class FlowImpl implements Flow, Serializable {
 			ArrayList<Object> paramObjects, ArrayList<Class> paramClazz) {
 		Object object = null;
 		try {
-			System.out.println("bean: " + bean.toString()  + " "+beanClass.toString());
-			System.out.println("methodName: "+methodName);
-			for (int i=0; i< paramClazz.size();i++){
-				System.out.println("params: "+paramClazz.get(i) + " "+paramObjects.get(i));
-			}
 			
-			System.out.println(paramClazz.toString());
 			object = beanClass.getDeclaredMethod(methodName, paramClazz.toArray(new Class[paramClazz.size()])).invoke(bean, paramObjects.toArray()); 
 			
-			//object = data.getClazz().getDeclaredMethod(methodName, paramClazz).invoke(data.getObject(), paramObjects.toArray());
-			System.out.println("Wolalem:" + bean.toString()  + " "+beanClass.toString());
+			System.out.println("Invoked: " + bean.toString()  + " "+beanClass.toString());
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -205,7 +191,6 @@ public class FlowImpl implements Flow, Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("*******************");
 		return object;
 	}
 
@@ -214,7 +199,7 @@ public class FlowImpl implements Flow, Serializable {
 	@Override
 	public void setResult(String resultName, Object result) {
 		// jezeli obiekt o takiej nazwie juz istnieje zastap istniejacy
-		System.out.println("Setting result: " + resultName + " "+ result.toString());
+		System.out.println("Setting result: " + resultName + " "+ result.toString() + " "+ result.getClass().toString());
 		map.put(resultName, result);
 
 	}
@@ -240,7 +225,6 @@ public class FlowImpl implements Flow, Serializable {
 			return null;
 		}
 
-		System.out.print("Wywoluje internally: ");
 		for (String e:exp) System.out.print(e + " ");
 		
 		if (exp.length ==1 ){

@@ -24,7 +24,7 @@ public class SecurityListener implements PhaseListener {
 
 	@Override
 	public void beforePhase(PhaseEvent event) {
-		System.out.println("SECURITY LISTENER: START...");
+		//System.out.println("SECURITY LISTENER: START...");
 		FacesContext facesContext = event.getFacesContext();
 		String view = facesContext.getViewRoot().getViewId();
 		// TODO what if post afer something .. rethink
@@ -54,12 +54,12 @@ public class SecurityListener implements PhaseListener {
 		// user allowed to display page - if not login page ? 
 		else if (!substringView(view).equals(Configuration.getConfigAttributeByName("login-page"))){
 			// user resigned from login
-			System.out.println("not login page - clear map");
+			//System.out.println("not login page - clear map");
 			clearSessionMap(facesContext);
 		}
 		// else display anything
 
-		System.out.println("SECURITY LISTENER: FINISH");
+		//System.out.println("SECURITY LISTENER: FINISH");
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class SecurityListener implements PhaseListener {
 	 */
 	private Boolean checkSecurity(FacesContext facesContext, String view){
 		String viewId = substringView(view);
-		System.out.println("SECURITY checking ViewId: "+viewId); 
+		//System.out.println("SECURITY checking ViewId: "+viewId); 
 
 		// if state exists
 		if (translator.getStateForView(viewId) != null){

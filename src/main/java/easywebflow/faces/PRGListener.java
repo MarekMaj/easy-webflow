@@ -20,7 +20,7 @@ public class PRGListener implements PhaseListener{
 		FacesContext facesContext = event.getFacesContext();
 
 		HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-		System.out.println("PRG LISTENER: START...");
+		//System.out.println("PRG LISTENER: START...");
 		// if Method is POST
 		if (!facesContext.getResponseComplete() && request.getMethod().equalsIgnoreCase("post")){
 
@@ -38,7 +38,7 @@ public class PRGListener implements PhaseListener{
 				}
 			}
 		}
-		System.out.println("PRG LISTENER: END");
+		//System.out.println("PRG LISTENER: END");
 	}
 
 	@Override
